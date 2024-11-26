@@ -18,6 +18,7 @@ class _FormularioScreenState extends State<FormularioScreen> {
   List<Formulario> _formularios = [];
   final TextEditingController _temaController = TextEditingController();
   final TextEditingController _cantidadPreguntasController = TextEditingController();
+  bool _isLoading = false;  // Estado para manejar la carga
 
   @override
   void initState() {
@@ -45,10 +46,23 @@ class _FormularioScreenState extends State<FormularioScreen> {
       return;
     }
 
-    final nuevoFormulario = await _crearFormulario.call(tema, cantPreguntas);
     setState(() {
-      _formularios.add(nuevoFormulario);
+      _isLoading = true;  // Inicia la carga
     });
+
+    try {
+      final nuevoFormulario = await _crearFormulario.call(tema, cantPreguntas);
+      setState(() {
+        _formularios.add(nuevoFormulario);
+      });
+    } catch (e) {
+      // Maneja el error si es necesario
+      print("Error al crear formulario: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;  // Detiene la carga
+      });
+    }
 
     _temaController.clear();
     _cantidadPreguntasController.clear();
@@ -57,36 +71,34 @@ class _FormularioScreenState extends State<FormularioScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      title: 'Formularios',
+      title: 'Quizzier: Formularios',
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                const Text("Nuevo formulario"),
+                const Text(
+                  "Nuevo formulario",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF640D5F), // Violeta
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
                       child: TextField(
                         controller: _temaController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Tema del formulario',
+                          labelStyle: TextStyle(color: Color(0xFF640D5F)), // Violeta
                           border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _cantidadPreguntasController,
-                        decoration: const InputDecoration(
-                          labelText: 'Número de preguntas',
-                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFEB5B00)), // Naranja
+                          ),
                         ),
                       ),
                     ),
@@ -96,9 +108,39 @@ class _FormularioScreenState extends State<FormularioScreen> {
                 Row(
                   children: [
                     Expanded(
+                      child: TextField(
+                        controller: _cantidadPreguntasController,
+                        decoration: InputDecoration(
+                          labelText: 'Número de preguntas',
+                          labelStyle: TextStyle(color: Color(0xFF640D5F)), // Violeta
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFEB5B00)), // Naranja
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
                       child: ElevatedButton(
-                        onPressed: _crearNuevoFormulario,
-                        child: const Text('Crear'),
+                        onPressed: _isLoading ? null : _crearNuevoFormulario,  // Deshabilita el botón mientras carga
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFEB5B00), // Naranja
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: _isLoading
+                            ? CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              )
+                            : const Text('Crear', style: TextStyle(fontSize: 16)),
                       ),
                     )
                   ],
@@ -112,9 +154,26 @@ class _FormularioScreenState extends State<FormularioScreen> {
               itemBuilder: (context, index) {
                 final formulario = _formularios[index];
                 return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  color: Color(0xFFF9F9F9), // Color claro para las tarjetas
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(color: Color(0xFFEB5B00)), // Naranja
+                  ),
                   child: ListTile(
-                    title: Text(formulario.tema),
-                    subtitle: Text('${formulario.preguntas.length} preguntas'),
+                    contentPadding: const EdgeInsets.all(16),
+                    title: Text(
+                      formulario.tema,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF640D5F), // Violeta
+                      ),
+                    ),
+                    subtitle: Text(
+                      '${formulario.preguntas.length} preguntas',
+                      style: TextStyle(color: Color(0xFFD91656)), // Rojo
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -132,45 +191,6 @@ class _FormularioScreenState extends State<FormularioScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  // Mostrar el formulario con las preguntas obtenidas
-  void _mostrarFormulario(Formulario formulario) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Formulario: ${formulario.tema}'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: formulario.preguntas.map((pregunta) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(pregunta.texto),
-                  ...pregunta.opciones.map((opcion) {
-                    return RadioListTile<int>(
-                      title: Text(opcion),
-                      value: pregunta.opciones.indexOf(opcion),
-                      groupValue: pregunta.respuestaCorrecta,
-                      onChanged: null, // No permitimos cambiar la respuesta aún
-                    );
-                  }).toList(),
-                ],
-              );
-            }).toList(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cerrar'),
-            ),
-          ],
-        );
-      },
     );
   }
 }
