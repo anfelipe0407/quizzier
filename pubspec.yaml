@@ -58,6 +58,12 @@ dev_dependencies:
 flutter:
   assets:
     - assets/data/usuarios.json
+    - assets/data/objetos.json
+    - assets/img/espada.png
+    - assets/img/escudo.png
+    - assets/img/esmeralda.png
+    - assets/img/anillo.png
+    - assets/img/anillo_fuego.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

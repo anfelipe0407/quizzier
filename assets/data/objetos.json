@@ -1,0 +1,8 @@
+[
+    {"id": 1, "nombre": "Espada", "imagen": "assets/img/espada.png", "precio": 10},
+    {"id": 2, "nombre": "Escudo", "imagen": "assets/img/escudo.png", "precio": 15},
+    {"id": 3, "nombre": "Poción", "imagen": "assets/img/esmeralda.png", "precio": 5},
+    {"id": 4, "nombre": "Anillo", "imagen": "assets/img/anillo.png", "precio": 20},
+    {"id": 5, "nombre": "Anillo de Fuego", "imagen": "assets/img/anillo_fuego.png", "precio": 25}
+  ]
+  
