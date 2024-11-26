@@ -11,10 +11,10 @@ class CustomDrawer extends StatelessWidget {
         children: [
           DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Color(0xFFEB5B00),
             ),
             child: const Text(
-              'Menú',
+              'Menú de opciones',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,

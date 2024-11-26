@@ -13,6 +13,7 @@ class BaseScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        backgroundColor: Color(0xFFEB5B00),
       ),
       drawer: const CustomDrawer(),
       body: body,

@@ -43,7 +43,6 @@ class _PuntuacionScreenState extends State<PuntuacionScreen> {
         objetosTienda = objetos;
       });
     } catch (e) {
-      // Manejar error al cargar los objetos
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al cargar los objetos: $e')),
       );
@@ -97,8 +96,14 @@ class _PuntuacionScreenState extends State<PuntuacionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Colores de la paleta
+    Color violeta = Color(0xFF640D5F);
+    Color fucsia = Color(0xFFD91656);
+    Color naranja = Color(0xFFEB5B00);
+    // Color amarillo = Color(0xFFFFB200);
+
     return BaseScreen(
-      title: 'Puntuaciones',
+      title: 'Quizzier: Puntuaciones',
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -106,17 +111,25 @@ class _PuntuacionScreenState extends State<PuntuacionScreen> {
           children: [
             Text(
               'Puntaje Global: $_puntajeGlobal',
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: violeta,  // Cambié el color del texto
+              ),
             ),
             const SizedBox(height: 20),
             Text(
               'Objetos de la Tienda',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: fucsia,  // Cambié el color del título
+              ),
             ),
             const SizedBox(height: 10),
             Expanded(
               child: objetosTienda.isEmpty
-                  ? Center(child: CircularProgressIndicator())
+                  ? Center(child: CircularProgressIndicator(color: naranja)) // Color del cargando
                   : GridView.builder(
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
@@ -141,7 +154,7 @@ class _PuntuacionScreenState extends State<PuntuacionScreen> {
                                 }
                               },
                               child: Card(
-                                color: comprado ? Colors.green : null,
+                                color: comprado ? Color(0xFF5CB85C) : null,  // Color verde cuando comprado
                                 elevation: 4.0,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.0),
@@ -159,16 +172,18 @@ class _PuntuacionScreenState extends State<PuntuacionScreen> {
                                     const SizedBox(height: 8),
                                     Text(
                                       objeto.nombre,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
+                                        color: violeta,  // Cambié el color del nombre del objeto
                                       ),
                                     ),
                                     Text(
                                       '${objeto.precio} puntos',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400,
+                                        color: naranja,  // Cambié el color del precio
                                       ),
                                     ),
                                   ],
