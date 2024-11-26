@@ -132,11 +132,13 @@ class _PuntuacionScreenState extends State<PuntuacionScreen> {
                             bool comprado = snapshot.data ?? false;
                             return GestureDetector(
                               onTap: () {
-                                _comprarObjeto(
-                                  objeto.id,
-                                  objeto.nombre,
-                                  objeto.precio,
-                                );
+                                if (!comprado) {
+                                  _comprarObjeto(
+                                    objeto.id,
+                                    objeto.nombre,
+                                    objeto.precio,
+                                  );
+                                }
                               },
                               child: Card(
                                 color: comprado ? Colors.green : null,
