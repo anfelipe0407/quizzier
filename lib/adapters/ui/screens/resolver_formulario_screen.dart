@@ -17,8 +17,11 @@ class ResolverFormularioScreen extends StatefulWidget {
 class _ResolverFormularioScreenState extends State<ResolverFormularioScreen> {
   final Map<int, int> _respuestasUsuario = {};
   final Map<int, bool> _respuestasCorrectas = {};
-  final RespuestasUsuarioLocalDataSource _respuestasUsuarioLocalDataSource = RespuestasUsuarioLocalDataSource();
-  final PuntuacionLocalDataSource _puntuacionLocalDataSource = PuntuacionLocalDataSource();
+
+  final RespuestasUsuarioLocalDataSource _respuestasUsuarioLocalDataSource =
+      RespuestasUsuarioLocalDataSource();
+  final PuntuacionLocalDataSource _puntuacionLocalDataSource =
+      PuntuacionLocalDataSource();
   bool _yaRespondido = false;
 
   @override
@@ -28,13 +31,22 @@ class _ResolverFormularioScreenState extends State<ResolverFormularioScreen> {
   }
 
   Future<void> _cargarRespuestas() async {
-    final respuestas = await _respuestasUsuarioLocalDataSource.obtenerRespuestasUsuario(widget.formulario.id);
-    final respuestasCorrectas = await _respuestasUsuarioLocalDataSource.obtenerRespuestasCorrectas(widget.formulario.id);
+    final respuestas = await _respuestasUsuarioLocalDataSource
+        .obtenerRespuestasUsuario(widget.formulario.id);
+    final respuestasCorrectas = await _respuestasUsuarioLocalDataSource
+        .obtenerRespuestasCorrectas(widget.formulario.id);
+
+    print("\n\n");
+    print("FORMULARIO ID: ${widget.formulario.id}");
+    print("respuestas $respuestas");
+    print("respuestasCorrectas $respuestasCorrectas");
+    print("\n\n");
+
     if (respuestas.isNotEmpty) {
       setState(() {
         _respuestasUsuario.addAll(respuestas);
         _respuestasCorrectas.addAll(respuestasCorrectas);
-        _yaRespondido = true;  // Si ya hay respuestas, se marca como respondido
+        _yaRespondido = true; // Si ya hay respuestas, se marca como respondido
       });
     }
   }
@@ -51,8 +63,12 @@ class _ResolverFormularioScreenState extends State<ResolverFormularioScreen> {
         itemCount: formulario.preguntas.length,
         itemBuilder: (context, index) {
           final pregunta = formulario.preguntas[index];
-          final respuestaCorrecta = _respuestasCorrectas[index] ?? false;
-          final colorCard = respuestaCorrecta ? Colors.green : Colors.red;
+          bool respuestaCorrecta = _respuestasCorrectas[index] ?? false;
+
+          // Si ya respondió, usar el color verde o rojo
+          Color colorCard = _yaRespondido
+              ? (respuestaCorrecta ? Colors.green : Colors.red)
+              : Colors.grey[300]!; // Gris claro si no ha respondido
 
           return Card(
             color: colorCard, // Cambiar el color de la tarjeta
@@ -79,11 +95,12 @@ class _ResolverFormularioScreenState extends State<ResolverFormularioScreen> {
                       value: opcionIndex,
                       groupValue: _respuestasUsuario[index],
                       onChanged: _yaRespondido
-                          ? null  // Deshabilitar la opción si ya ha respondido
+                          ? null // Deshabilitar la opción si ya ha respondido
                           : (value) {
                               setState(() {
                                 _respuestasUsuario[index] = value!;
-                                _respuestasCorrectas[index] = value == pregunta.respuestaCorrecta;
+                                _respuestasCorrectas[index] =
+                                    value == pregunta.respuestaCorrecta;
                               });
                             },
                     );
@@ -115,7 +132,8 @@ class _ResolverFormularioScreenState extends State<ResolverFormularioScreen> {
         widget.formulario.id, _respuestasUsuario, _respuestasCorrectas);
 
     // Actualizar puntaje global
-    await _puntuacionLocalDataSource.actualizarPuntajeGlobal(totalCorrectas * 100);
+    await _puntuacionLocalDataSource
+        .actualizarPuntajeGlobal(totalCorrectas * 100);
 
     // Mostrar resultados y redirigir
     showDialog(
@@ -129,7 +147,8 @@ class _ResolverFormularioScreenState extends State<ResolverFormularioScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Cerrar diálogo
-                Navigator.pushReplacementNamed(context, '/formulario'); // Redirigir
+                Navigator.pushReplacementNamed(
+                    context, '/formulario'); // Redirigir
               },
               child: const Text('Aceptar'),
             ),

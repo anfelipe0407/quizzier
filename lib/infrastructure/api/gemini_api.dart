@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 import 'package:quizzier/domain/entities/formulario.dart';
 
 class GeminiApi {
-  final String apiKey = 'YOUR_API_KEY'; // Reemplaza con tu clave de API
+  final String apiKey = 'AIzaSyAPclgThCDmuZBmGKUGV30_rUXi0rIUQGQ'; // Reemplaza con tu clave de API
+  final Uuid uuid = Uuid(); // Instancia para generar UUIDs
 
   Future<Formulario> generarFormulario(String tema, int cantidadPreguntas) async {
     try {
@@ -17,11 +19,11 @@ class GeminiApi {
 
       final prompt = '''
         Por favor, genera un cuestionario sobre el tema "$tema" en formato JSON. El cuestionario debe incluir:
-        - Un campo "id" con un identificador único del cuestionario.
+        - Un campo "id" con un identificador único del cuestionario generalo de manera aleatoria en formato UUID.
         - Un campo "tema" con el nombre del tema.
         - Un campo "preguntas", que es una lista de preguntas.
         Cada pregunta debe tener:
-        - Un campo "id" con un identificador único.
+        - Un campo "id" con un identificador único generalo de manera aleatoria en formato UUID.
         - Un campo "texto" con el texto de la pregunta.
         - Un campo "opciones", que es una lista de 4 opciones de respuesta.
         - Un campo "respuestaCorrecta" con el índice (de 0 a 3) de la opción correcta.
@@ -84,7 +86,7 @@ class GeminiApi {
     // Convertimos cada pregunta del JSON en una instancia de Pregunta
     final preguntas = (formularioJson['preguntas'] as List).map((preguntaJson) {
       return Pregunta(
-        id: preguntaJson['id'],
+        id: uuid.v4(), // Generamos un UUID aleatorio para cada pregunta
         texto: preguntaJson['texto'],
         opciones: List<String>.from(preguntaJson['opciones']),
         respuestaCorrecta: preguntaJson['respuestaCorrecta'],
@@ -93,7 +95,7 @@ class GeminiApi {
 
     // Retornamos el formulario completo
     return Formulario(
-      id: formularioJson['id'],
+      id: uuid.v4(), // Generamos un UUID aleatorio para el formulario
       tema: formularioJson['tema'],
       preguntas: preguntas,
     );
