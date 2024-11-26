@@ -59,6 +59,7 @@ flutter:
   assets:
     - assets/data/usuarios.json
     - assets/data/objetos.json
+    - assets/img/login_image.png
     - assets/img/aprendiz.png
     - assets/img/intermedio.png
     - assets/img/avanzado.png

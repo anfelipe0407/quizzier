@@ -44,33 +44,64 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Iniciar sesión', style: TextStyle(color: Colors.white),),
+        backgroundColor: const Color(0xFFEB5B00), // Violeta
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Imagen en la parte superior
+            Image.asset(
+              'assets/img/login_image.png', // Coloca tu imagen aquí
+              height: 150,
+              fit: BoxFit.cover,
+            ),
+            Text("QUIZZIER"),
+            const SizedBox(height: 32),
+            // Campo de usuario
             TextField(
               controller: _usernameController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Usuario',
+                labelStyle: TextStyle(color: Color(0xFF640D5F)), // Violeta
                 border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFEB5B00)), // Naranja
+                ),
               ),
             ),
             const SizedBox(height: 16),
+            // Campo de contraseña
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Contraseña',
+                labelStyle: TextStyle(color: Color(0xFF640D5F)), // Violeta
                 border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFEB5B00)), // Naranja
+                ),
               ),
               obscureText: true,
             ),
             const SizedBox(height: 16),
+            // Botón de login
             ElevatedButton(
               onPressed: _login,
-              child: const Text('Iniciar sesión'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFEB5B00), // Naranja
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: const Text(
+                'Iniciar sesión',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
             if (_errorMessage.isNotEmpty)
               Padding(
