@@ -18,7 +18,7 @@ class _FormularioScreenState extends State<FormularioScreen> {
   List<Formulario> _formularios = [];
   final TextEditingController _temaController = TextEditingController();
   final TextEditingController _cantidadPreguntasController = TextEditingController();
-  bool _isLoading = false;  // Estado para manejar la carga
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -47,25 +47,21 @@ class _FormularioScreenState extends State<FormularioScreen> {
     }
 
     setState(() {
-      _isLoading = true;  // Inicia la carga
+      _isLoading = true;
     });
 
-    try {
-      final nuevoFormulario = await _crearFormulario.call(tema, cantPreguntas);
-      setState(() {
-        _formularios.add(nuevoFormulario);
-      });
-    } catch (e) {
-      // Maneja el error si es necesario
-      print("Error al crear formulario: $e");
-    } finally {
-      setState(() {
-        _isLoading = false;  // Detiene la carga
-      });
-    }
+    final nuevoFormulario = await _crearFormulario.call(tema, cantPreguntas);
+    setState(() {
+      _formularios.add(nuevoFormulario);
+      _isLoading = false;
+    });
 
     _temaController.clear();
     _cantidadPreguntasController.clear();
+  }
+
+  bool _isFormValid() {
+    return _temaController.text.isNotEmpty && _cantidadPreguntasController.text.isNotEmpty;
   }
 
   @override
@@ -100,6 +96,9 @@ class _FormularioScreenState extends State<FormularioScreen> {
                             borderSide: BorderSide(color: Color(0xFFEB5B00)), // Naranja
                           ),
                         ),
+                        onChanged: (value) {
+                          setState(() {});
+                        },
                       ),
                     ),
                   ],
@@ -118,6 +117,10 @@ class _FormularioScreenState extends State<FormularioScreen> {
                             borderSide: BorderSide(color: Color(0xFFEB5B00)), // Naranja
                           ),
                         ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          setState(() {});
+                        },
                       ),
                     ),
                   ],
@@ -127,7 +130,7 @@ class _FormularioScreenState extends State<FormularioScreen> {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _crearNuevoFormulario,  // Deshabilita el botón mientras carga
+                        onPressed: _isLoading || !_isFormValid() ? null : _crearNuevoFormulario,  // Deshabilita el botón si no es válido
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFEB5B00), // Naranja
                           foregroundColor: Colors.white,
